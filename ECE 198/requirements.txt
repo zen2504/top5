@@ -1,0 +1,3 @@
+#requirements.txt
+spotipy == 2.18.0 
+python-dotenv == 0.19.1

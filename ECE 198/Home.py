@@ -8,7 +8,7 @@ import subprocess
 
 class SpotifyApp:
     def __init__(self, root):
-        # API Crendianls 
+        # API Credentials 
         self.SPOTIPY_CLIENT_ID = 'your_client_id'
         self.SPOTIPY_CLIENT_SECRET = 'your_client_secret'
 
@@ -25,10 +25,15 @@ class SpotifyApp:
 
         # Configure ttk Style
         self.style = ttk.Style()
+
+        # Configure ttk Style for Treeview
+        self.style.configure("Custom.Treeview.Heading", font=("Monochrome", 12), background=self.spotify_black, foreground=self.spotify_white)
+        self.style.configure("Custom.Treeview", background=self.spotify_black, fieldbackground=self.spotify_black, foreground=self.spotify_white)
+        self.style.map("Custom.Treeview", background=[("selected", self.spotify_green)])
+
+        # Configure ttk Style for other widgets
         self.style.configure("TLabel", background=self.spotify_black, foreground=self.spotify_white, font=("Monochrome", 12))
         self.style.configure("TButton", background=self.spotify_green, foreground=self.spotify_black, font=("Monochrome", 12))
-        self.style.configure("Treeview", background=self.spotify_white, fieldbackground=self.spotify_white)
-        self.style.map("Treeview", background=[("selected", self.spotify_green)])
 
         # Configure root window background color
         root.configure(bg=self.spotify_black)
@@ -47,7 +52,7 @@ class SpotifyApp:
         self.search_button.grid(row=0, column=2, padx=5)
 
         # Create canvas
-        self.canvas = tk.Canvas(root, width=700, height=150, background=self.spotify_black)  # Increased dimensions
+        self.canvas = tk.Canvas(root, width=700, height=200, background=self.spotify_black)  # Increased dimensions
         self.canvas.pack(side=tk.TOP, padx=10, pady=10)
 
         # Add the Spotify logo to the bottom left (resized and bigger)
@@ -63,7 +68,7 @@ class SpotifyApp:
         self.frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
         # Create a Treeview for the album history
-        self.album_tree = ttk.Treeview(self.frame, columns=("Album", "Artist"), height=10, show="headings")
+        self.album_tree = ttk.Treeview(self.frame, columns=("Album", "Artist"), height=10, show="headings", style="Custom.Treeview")
         self.album_tree.heading("Album", text="Album")
         self.album_tree.heading("Artist", text="Artist")
         self.album_tree.pack(side=tk.LEFT, padx=10)

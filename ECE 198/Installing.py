@@ -1,7 +1,9 @@
 import http.server
 import socketserver
 import webbrowser
+import subprocess
 
+subprocess.call(["pip", "install", "-r", "requirements.txt"])
 PORT = 7694
 REDIRECT_URI = f'http://localhost:{PORT}/callback'
 CLIENT_ID = '7158b9f6b992465fa597983e18e173d2'
