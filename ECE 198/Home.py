@@ -4,16 +4,33 @@ from PIL import Image, ImageTk
 import random
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+from dotenv import load_dotenv
+import os
+import importlib
 import subprocess
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get Spotify API credentials from environment variables
+SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
+SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
+
+# List of required packages
+required_packages = ['spotipy', 'Pillow', 'python-dotenv']
+
+# Check if each package is installed, and install it if not
+for package in required_packages:
+    try:
+        importlib.import_module(package)
+    except ImportError:
+        print(f"Installing {package}...")
+        subprocess.check_call(['pip', 'install', package])
 
 class SpotifyApp:
     def __init__(self, root):
-        # API Credentials 
-        self.SPOTIPY_CLIENT_ID = 'your_client_id'
-        self.SPOTIPY_CLIENT_SECRET = 'your_client_secret'
-
         # Initialize Spotipy
-        self.sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=self.SPOTIPY_CLIENT_ID, client_secret=self.SPOTIPY_CLIENT_SECRET))
+        self.sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET))
 
         # Dictionary to store album objects and their tracks
         self.albums = {}
