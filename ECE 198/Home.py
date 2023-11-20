@@ -1,31 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
-from PIL import Image, ImageTk
 import random
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from dotenv import load_dotenv
-import os
-import importlib
 import subprocess
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Get Spotify API credentials from environment variables
-SPOTIPY_CLIENT_ID = os.getenv("SPOTIPY_CLIENT_ID")
-SPOTIPY_CLIENT_SECRET = os.getenv("SPOTIPY_CLIENT_SECRET")
-
-# List of required packages
-required_packages = ['spotipy', 'Pillow', 'python-dotenv']
-
-# Check if each package is installed, and install it if not
-for package in required_packages:
-    try:
-        importlib.import_module(package)
-    except ImportError:
-        print(f"Installing {package}...")
-        subprocess.check_call(['pip', 'install', package])
+# Replace these with your actual Spotify API credentials
+SPOTIPY_CLIENT_ID ='7158b9f6b992465fa597983e18e173d2'
+SPOTIPY_CLIENT_SECRET = '09b691ffbabd404a92cf6f1e06c01c57'
 
 class SpotifyApp:
     def __init__(self, root):
@@ -42,15 +24,10 @@ class SpotifyApp:
 
         # Configure ttk Style
         self.style = ttk.Style()
-
-        # Configure ttk Style for Treeview
-        self.style.configure("Custom.Treeview.Heading", font=("Monochrome", 12), background=self.spotify_black, foreground=self.spotify_white)
-        self.style.configure("Custom.Treeview", background=self.spotify_black, fieldbackground=self.spotify_black, foreground=self.spotify_white)
-        self.style.map("Custom.Treeview", background=[("selected", self.spotify_green)])
-
-        # Configure ttk Style for other widgets
         self.style.configure("TLabel", background=self.spotify_black, foreground=self.spotify_white, font=("Monochrome", 12))
         self.style.configure("TButton", background=self.spotify_green, foreground=self.spotify_black, font=("Monochrome", 12))
+        self.style.configure("Treeview", background=self.spotify_white, fieldbackground=self.spotify_white)
+        self.style.map("Treeview", background=[("selected", self.spotify_green)])
 
         # Configure root window background color
         root.configure(bg=self.spotify_black)
@@ -69,23 +46,25 @@ class SpotifyApp:
         self.search_button.grid(row=0, column=2, padx=5)
 
         # Create canvas
-        self.canvas = tk.Canvas(root, width=700, height=200, background=self.spotify_black)  # Increased dimensions
+        self.canvas = tk.Canvas(root, width=700, height=150, background=self.spotify_black)  # Increased dimensions
         self.canvas.pack(side=tk.TOP, padx=10, pady=10)
 
-        # Add the Spotify logo to the bottom left (resized and bigger)
-        self.spotify_logo = Image.open("spotify_logo.png")  # Replace with the actual filename of your downloaded image
-        self.spotify_logo = self.spotify_logo.resize((100, 100))
-        self.spotify_logo = ImageTk.PhotoImage(self.spotify_logo)
-        self.logo_label = ttk.Label(root, image=self.spotify_logo, background=self.spotify_black)
-        self.logo_label.photo = self.spotify_logo  # Keep a reference to the image to prevent garbage collection
-        self.logo_label.pack(side=tk.LEFT, padx=10, pady=10)
+       # Load the Spotify logo using tkinter.PhotoImage and resize it
+        image_path = "spotify_logo.png"  # Replace with the actual filename of your downloaded image
+        spotify_logo = tk.PhotoImage(file=image_path)
+        spotify_logo = spotify_logo.subsample(8, 8)  # Adjust the subsample values to resize the image
+
+        # Create a Label to display the resized Spotify logo
+        logo_label = ttk.Label(root, image=spotify_logo, background=self.spotify_black)
+        logo_label.photo = spotify_logo  # Keep a reference to the image to prevent garbage collection
+        logo_label.pack(side=tk.LEFT, padx=10, pady=10)
 
         # Create a Frame for the album history
         self.frame = ttk.Frame(root)
         self.frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
         # Create a Treeview for the album history
-        self.album_tree = ttk.Treeview(self.frame, columns=("Album", "Artist"), height=10, show="headings", style="Custom.Treeview")
+        self.album_tree = ttk.Treeview(self.frame, columns=("Album", "Artist"), height=10, show="headings")
         self.album_tree.heading("Album", text="Album")
         self.album_tree.heading("Artist", text="Artist")
         self.album_tree.pack(side=tk.LEFT, padx=10)
@@ -102,9 +81,6 @@ class SpotifyApp:
 
         # Bind the function to load new songs when an item in the Treeview is selected
         self.album_tree.bind("<<TreeviewSelect>>", self.load_new_songs)
-
-        # Run the installing.py file in a separate process
-        subprocess.Popen(["python", "installing.py"])
 
     def search_album(self):
         album_name = self.album_entry.get()
@@ -160,9 +136,14 @@ class SpotifyApp:
         self.canvas.delete("result_text")
 
 if __name__ == "__main__":
+    # Run the installing.py script
+    subprocess.call(["python", "installing.py"])
+
+    # Create the Tkinter root window
     root = tk.Tk()
     root.title("Spotify Top 5 Search")
 
+    # Create the SpotifyApp instance
     app = SpotifyApp(root)
 
     # Start the Tkinter event loop
